@@ -10,12 +10,13 @@ const PRIVATE_KEY = 'b53f16b50d1cf103bd38378d44dc0b05bbbdfe094828297350a433fbc86
 const CONTRATO_ADDRESS = '0x2437266E70E770bf0851aAE3886aAE0DE6E15519';
 
 const abi = [
-  "function registrarCommit(bool esTester, string nombreEjercicio, string hash, string mensaje, uint fechaCommit) public"
+  "function registrarCommit(bool esTester, string nombreEjercicio, string hash, string mensaje, uint256 fechaCommit, string url) public"
 ];
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const contrato = new ethers.Contract(CONTRATO_ADDRESS, abi, wallet);
+
 
 app.post("/PushPrograma", async (req, res) => {
   const commit = req.body.head_commit;
@@ -27,19 +28,20 @@ app.post("/PushPrograma", async (req, res) => {
   const hash = commit.id;
   const mensaje = commit.message;
   const fecha = Math.floor(new Date(commit.timestamp).getTime() / 1000);
+  const url = commit.url; // 🔹 Aquí obtienes la URL del commit
 
   const posiblesEjercicios = ["Fibonacci", "Factorial", "Conversor"];
   const nombreEjercicio = posiblesEjercicios.find(e => mensaje.includes(e)) || "Fibonacci";
 
   const esTester = false; // O lógica para cambiar si lo deseas
 
-  // 🟢 Mostrar en consola los datos que se enviarán
   console.log("📤 Enviando datos al contrato:");
   console.log("  ▶️ esTester:", esTester);
   console.log("  ▶️ nombreEjercicio:", nombreEjercicio);
   console.log("  ▶️ hash:", hash);
   console.log("  ▶️ mensaje:", mensaje);
   console.log("  ▶️ fechaCommit:", fecha);
+  console.log("  ▶️ url:", url);
 
   try {
     const tx = await contrato.registrarCommit(
@@ -47,7 +49,56 @@ app.post("/PushPrograma", async (req, res) => {
       nombreEjercicio,
       hash,
       mensaje,
-      fecha
+      fecha,
+      url
+    );
+    console.log("⏳ Transacción enviada. Esperando confirmación...");
+    await tx.wait();
+    console.log("✅ Commit registrado correctamente.");
+    res.status(200).send("Commit registrado correctamente");
+  } catch (err) {
+    console.error("❌ Error al registrar commit:", err);
+    res.status(500).send("Error al registrar el commit");
+  }
+});
+
+
+
+
+
+app.post("/PushTest", async (req, res) => {
+  const commit = req.body.head_commit;
+  if (!commit) {
+    console.log("❌ No se encontró 'head_commit' en el push.");
+    return res.status(400).send("No se encontró el commit principal");
+  }
+
+  const hash = commit.id;
+  const mensaje = commit.message;
+  const fecha = Math.floor(new Date(commit.timestamp).getTime() / 1000);
+  const url = commit.url; // 🔹 Aquí obtienes la URL del commit
+
+  const posiblesEjercicios = ["Fibonacci", "Factorial", "Conversor"];
+  const nombreEjercicio = posiblesEjercicios.find(e => mensaje.includes(e)) || "Fibonacci";
+
+  const esTester = true; // O lógica para cambiar si lo deseas
+
+  console.log("📤 Enviando datos al contrato:");
+  console.log("  ▶️ esTester:", esTester);
+  console.log("  ▶️ nombreEjercicio:", nombreEjercicio);
+  console.log("  ▶️ hash:", hash);
+  console.log("  ▶️ mensaje:", mensaje);
+  console.log("  ▶️ fechaCommit:", fecha);
+  console.log("  ▶️ url:", url);
+
+  try {
+    const tx = await contrato.registrarCommit(
+      esTester,
+      nombreEjercicio,
+      hash,
+      mensaje,
+      fecha,
+      url
     );
     console.log("⏳ Transacción enviada. Esperando confirmación...");
     await tx.wait();
