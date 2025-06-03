@@ -17,7 +17,7 @@ const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const contrato = new ethers.Contract(CONTRATO_ADDRESS, abi, wallet);
 
-app.post("/webhook", async (req, res) => {
+app.post("/PushPrograma", async (req, res) => {
   const commit = req.body.head_commit;
   if (!commit) {
     console.log("❌ No se encontró 'head_commit' en el push.");
