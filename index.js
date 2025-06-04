@@ -7,7 +7,7 @@ app.use(express.json());
 
 const RPC_URL = 'https://sepolia.infura.io/v3/30f0d0513a644d3ea2ac6b57613448da';
 const PRIVATE_KEY = 'b53f16b50d1cf103bd38378d44dc0b05bbbdfe094828297350a433fbc8620671';
-const CONTRATO_ADDRESS = '0x3782756c47a54f6F0EC39FF7bA3B35a36fef61ca';
+const CONTRATO_ADDRESS = '0x2E137014C7233263E2a144B33fd19b58B973801B';
 
 const abi = [
   "function registrarCommit(bool esTester, string nombreEjercicio, string hash, string mensaje, uint256 fechaCommit, string url) public"
