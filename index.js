@@ -7,7 +7,7 @@ app.use(express.json());
 
 const RPC_URL = 'https://sepolia.infura.io/v3/30f0d0513a644d3ea2ac6b57613448da';
 const PRIVATE_KEY = 'b53f16b50d1cf103bd38378d44dc0b05bbbdfe094828297350a433fbc8620671';
-const CONTRATO_ADDRESS = '0x1377063cdFa46594665dd59B33Aeb6F082118Ade';
+const CONTRATO_ADDRESS = '0x1c70831fa04Fae9A12304a4ef8f7792AD09F27e6';//cambiar nu
 
 const abi = [
   "function registrarCommit(bool esTester, string nombreEjercicio, string hash, string mensaje, uint256 fechaCommit, string url) public"
@@ -29,6 +29,7 @@ app.post("/PushPrograma", async (req, res) => {
   const mensaje = commit.message;
   const fecha = Math.floor(new Date(commit.timestamp).getTime() / 1000);
   const url = commit.url; // 🔹 Aquí obtienes la URL del commit
+
 
   const posiblesEjercicios = ["Fibonacci", "Factorial", "Conversor"];
   const nombreEjercicio = posiblesEjercicios.find(e => mensaje.includes(e)) || "Fibonacci";
